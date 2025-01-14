@@ -1,95 +1,101 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useRef, useState, useEffect } from "react";
+import "./globals.css";
+import { IoMdClose } from "react-icons/io";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const dialogRef = useRef(null);
+  const items = [
+    {
+      id: 0,
+      title: "This is the title",
+      description: "lipsun",
+      img: "img0.jpg",
+    },
+    {
+      id: 1,
+      title: "This is the title",
+      description: "lipsun",
+      img: "img1.jpg",
+    },
+    {
+      id: 2,
+      title: "This is the title",
+      description: "lipsun",
+      img: "img2.jpg",
+    },
+    {
+      id: 3,
+      title: "This is the title",
+      description: "lipsun",
+      img: "img3.jpg",
+    },
+    {
+      id: 4,
+      title: "This is the title",
+      description: "lipsun",
+      img: "img4.jpg",
+    },
+  ];
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [activeCard, setActiveCard] = useState(null);
+
+  useEffect(() => {
+    if (!activeCard) return;
+    dialogRef.current?.showModal();
+    document.body.style.overflow = "hidden";
+    dialogRef.current?.addEventListener("close", closeModal);
+    return () => {
+      dialogRef.current?.removeEventListener("close", closeModal);
+    };
+  }, [activeCard]);
+
+  function closeModal() {
+    dialogRef.current?.close();
+    setActiveCard(undefined);
+    document.body.style.overflow = "";
+  }
+
+  return (
+    <div className="border grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] grid-rows-5 gap-4">
+      {items.map((item) => {
+        return (
+          <div
+            key={item.id}
+            onClick={() => setActiveCard(item)}
+            className="bg-blue-200 rounded-md overflow-hidden"
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <img src={`/images/${item.img}`} alt={item.img} className="" />
+          </div>
+        );
+      })}
+      {activeCard && (
+        <dialog
+          ref={dialogRef}
+          className="backdrop:bg-black/80 rounded-md"
+          // onClick={() => closeModalBackdrop(event)}
+        >
+          <div className="relative z-0 w-[90vw] h-[90vh] overflow-visible flex items-center justify-center flex-col">
+            <img
+              src={`/images/${activeCard.img}`}
+              alt=""
+              className="max-w-[40%]"
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <h1>{activeCard.title}</h1>
+            <p>{activeCard.description}</p>
+
+            <button
+              className="bg-zinc-200 border rounded-full shadow w-6 h-6 flex items-center justify-center absolute top-1 right-4 z-1 cursor-pointer"
+              onClick={closeModal}
+            >
+              <span className="w-4 h-4 text-zinc-900">
+                <IoMdClose />
+              </span>
+            </button>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 }
